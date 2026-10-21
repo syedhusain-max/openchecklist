@@ -33,9 +33,24 @@ for (const c of data.checklists) {
 }
 for (const k of data.kits) for (const id of k.checklists) if (!ids.has(id)) errors.push(`kit ${k.id}: unknown checklist ${id}`);
 
+// Every checklist needs a live preview, and every item must be annotated in it.
+const { PREVIEWS } = await import('../web/previews.js');
+let anchored = 0;
+for (const c of data.checklists) {
+  const html = PREVIEWS[c.id];
+  if (!html) { errors.push(`checklist ${c.id}: no preview in web/previews.js`); continue; }
+  const annotated = new Set([...html.matchAll(/data-check="([^"]+)"/g)].flatMap((m) => m[1].split(/\s+/)));
+  for (const it of c.items) {
+    if (annotated.has(it.id)) anchored++;
+    else errors.push(`checklist ${c.id}: item "${it.id}" has no data-check anchor in its preview`);
+  }
+  for (const a of annotated) if (!c.items.some((it) => it.id === a)) errors.push(`checklist ${c.id}: preview anchor "${a}" matches no item`);
+}
+for (const id of Object.keys(PREVIEWS)) if (!ids.has(id)) errors.push(`preview ${id}: no matching checklist`);
+
 const items = data.checklists.reduce((a, c) => a + c.items.length, 0);
 if (errors.length) {
   console.error(`✗ ${errors.length} problem(s):\n  ${errors.join('\n  ')}`);
   process.exit(1);
 }
-console.log(`✓ ${data.checklists.length} checklists, ${items} items, ${data.kits.length} kits — valid`);
+console.log(`✓ ${data.checklists.length} checklists, ${items} items, ${data.kits.length} kits, ${anchored}/${items} items previewed — valid`);

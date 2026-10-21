@@ -1,4 +1,5 @@
 // OpenChecklist — zero-dependency SPA. Data: checklists.json. State: localStorage.
+import { mountPreview } from './preview-engine.js';
 const STORE_KEY = 'openchecklist:v1';
 const PRIORITY_LABEL = { must: 'Must', should: 'Should', nice: 'Nice' };
 const WCAG_URL = (sc) => `https://www.w3.org/WAI/WCAG22/Understanding/?sc=${encodeURIComponent(sc)}`;
@@ -165,6 +166,7 @@ function viewHome() {
     <div class="hero-cta">
       <a class="btn primary" href="#/kits">Start from a kit</a>
       <button class="btn" data-action="palette">Search ${DATA.checklists.length} checklists</button>
+      <a class="btn" href="#/previews">👁 Live previews</a>
       <a class="btn ghost" href="#/mcp">Use with AI →</a>
     </div>
     <div class="hero-stats">
@@ -230,6 +232,7 @@ function itemHTML(c, it, ctx) {
       <div class="item-actions">
         <button class="link-btn" data-action="na" aria-pressed="${st === 'na'}">Not applicable</button>
         <button class="link-btn" data-action="note" aria-expanded="${!!note}">${note ? 'Edit note' : 'Add note'}</button>
+        <button class="link-btn pv-link" data-action="preview" aria-pressed="false">👁 Preview</button>
         <button class="link-btn" data-action="link">Copy link</button>
       </div>
       <textarea class="note" data-note="${key}" placeholder="Notes, evidence, ticket links…" aria-label="Note for ${esc(it.title)}" ${note ? '' : 'hidden'}>${esc(note)}</textarea>
@@ -261,15 +264,20 @@ function viewChecklist(id, focusItem) {
   const ctx = state.scratch;
   const related = DATA.kits.filter((k) => k.checklists.includes(id));
   current = { title: `${c.title} ${catName(c.category)} checklist`, lists: [c], ctx, focusItem };
-  return `<div class="wrap">
+  return `<div class="wrap wide">
     <div class="page-head">
       <nav class="crumbs" aria-label="Breadcrumb"><a href="#/browse">Browse</a><span>/</span><a href="#/browse/${c.category}">${esc(catName(c.category))}</a></nav>
       <div class="page-title"><span class="emoji" aria-hidden="true">${c.icon}</span><h1>${esc(c.title)} <small>${esc(catName(c.category))}</small></h1></div>
       <p class="lead">${esc(c.description)}</p>
     </div>
-    ${toolbar(c.id)}
-    <ol class="items" data-filter="all">${c.items.map((it) => itemHTML(c, it, ctx)).join('')}</ol>
-    <p class="muted" style="font-size:14px">Keyboard: <kbd>j</kbd>/<kbd>k</kbd> move · <kbd>x</kbd> check · <kbd>n</kbd> not applicable · <kbd>/</kbd> search</p>
+    <div class="cl-layout">
+      <div class="cl-main">
+        ${toolbar(c.id)}
+        <ol class="items" data-filter="all">${c.items.map((it) => itemHTML(c, it, ctx)).join('')}</ol>
+        <p class="muted" style="font-size:14px">Keyboard: <kbd>j</kbd>/<kbd>k</kbd> move · <kbd>x</kbd> check · <kbd>n</kbd> not applicable · <kbd>p</kbd> preview · <kbd>/</kbd> search</p>
+      </div>
+      <aside class="cl-preview">${previewPanel(c)}</aside>
+    </div>
     ${related.length ? `<section class="section"><div class="section-head"><h2>Part of these kits</h2></div><div class="grid">${related.map(kitCard).join('')}</div></section>` : ''}
   </div>`;
 }
@@ -315,7 +323,7 @@ function viewProject(pid) {
       <p class="lead">${lists.length} checklists · created ${new Date(p.created).toLocaleDateString()}</p>
       <div><button class="btn sm danger" data-action="delete-project">Delete project</button></div></div>
     ${toolbar('project')}
-    ${lists.map((c) => `<section class="project-section" id="sec-${c.id.replace('/', '-')}"><header><span style="font-size:26px" aria-hidden="true">${c.icon}</span><h2><a href="#/c/${c.id}">${esc(c.title)}</a> <small class="muted" style="font-size:16px">${esc(catName(c.category))}</small></h2><div style="margin-left:auto">${ring(stats(p, [c]).pct, c.id)}</div></header>
+    ${lists.map((c) => `<section class="project-section" id="sec-${c.id.replace('/', '-')}"><header><span style="font-size:26px" aria-hidden="true">${c.icon}</span><h2><a href="#/c/${c.id}">${esc(c.title)}</a> <small class="muted" style="font-size:16px">${esc(catName(c.category))}</small></h2><div style="margin-left:auto;display:flex;gap:10px;align-items:center"><button class="btn sm" data-action="pv-open" data-cid="${c.id}">👁 Preview</button>${ring(stats(p, [c]).pct, c.id)}</div></header>
       <ol class="items" data-filter="all">${c.items.map((it) => itemHTML(c, it, p)).join('')}</ol></section>`).join('')}
   </div>`;
 }
@@ -331,6 +339,122 @@ function viewImport(b64) {
   return `<div class="wrap"><div class="page-head"><h1>Import “${esc(data.name)}”</h1>
     <p class="lead">Someone shared a checklist project with ${lists.length} checklists: ${lists.map((c) => esc(c.title)).join(', ')}. Importing saves a copy in this browser.</p>
     <div class="hero-cta"><button class="btn primary" data-action="confirm-import">Import as project</button><a class="btn" href="#/">Cancel</a></div></div></div>`;
+}
+
+// ---------- previews ----------
+const previewCtl = new Map(); // checklist id -> controller for inline panels on the current page
+let thumbObserver = null;
+const appTheme = () => document.documentElement.dataset.theme || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+const deviceChips = (c, scope) => (c.category === 'mobile' ? '<span class="chip static">📱 iPhone frame</span>'
+  : ['desktop', 'tablet', 'mobile'].map((d) => `<button class="chip" data-action="pv-device" data-device="${d}" data-scope="${scope}" aria-pressed="${d === 'desktop'}">${{ desktop: '🖥 Desktop', tablet: 'Tablet', mobile: 'Mobile' }[d]}</button>`).join(''));
+
+function previewPanel(c) {
+  return `<section class="preview-panel" aria-label="Live preview of ${esc(c.title)}">
+    <div class="pp-bar">
+      <div><b>Live preview</b><p class="muted pp-hint">Hover an item or press <kbd>p</kbd> to see it in the UI.</p></div>
+      <div class="pp-controls">${deviceChips(c, c.id)}
+        <button class="chip" data-action="pv-theme" data-scope="${c.id}" aria-pressed="${appTheme() === 'dark'}">🌙 Dark</button>
+        <button class="chip" data-action="pv-xray" data-scope="${c.id}" aria-pressed="false">Show all ${c.items.length} checks</button>
+        <button class="chip" data-action="pv-open" data-cid="${c.id}" aria-label="Open preview full screen">⤢ Expand</button></div>
+    </div>
+    <div class="pp-host" data-preview="${c.id}"></div>
+  </section>`;
+}
+
+function mountPagePreviews() {
+  previewCtl.forEach((ctl) => ctl.destroy());
+  previewCtl.clear();
+  thumbObserver?.disconnect();
+  app.querySelectorAll('[data-preview]').forEach((host) => {
+    const c = byId.get(host.dataset.preview);
+    previewCtl.set(c.id, mountPreview(host, c, { theme: appTheme(), onBadge: (iid) => focusItem(c.id, iid) }));
+  });
+  const thumbs = app.querySelectorAll('[data-preview-thumb]');
+  if (!thumbs.length) return;
+  thumbObserver = new IntersectionObserver((entries) => entries.forEach((e) => {
+    if (!e.isIntersecting) return;
+    thumbObserver.unobserve(e.target);
+    mountPreview(e.target, byId.get(e.target.dataset.previewThumb), { theme: appTheme(), interactive: false });
+  }), { rootMargin: '200px' });
+  thumbs.forEach((t) => thumbObserver.observe(t));
+}
+
+function focusItem(cid, iid) {
+  const li = app.querySelector(`.item[data-cid="${CSS.escape(cid)}"][data-iid="${CSS.escape(iid)}"]`);
+  if (!li) return;
+  li.scrollIntoView({ block: 'center', behavior: 'smooth' });
+  li.classList.remove('flash'); void li.offsetWidth; li.classList.add('flash');
+  li.querySelector('.check').focus({ preventScroll: true });
+  previewItem(li, false);
+}
+
+let previewing = null;
+function previewItem(li, revealPanel = true) {
+  const { cid, iid } = li.dataset;
+  const it = byId.get(cid).items.find((x) => x.id === iid);
+  const ctl = previewCtl.get(cid);
+  if (!ctl) { openPreviewDialog(cid, iid); return; }
+  if (previewing !== li) {
+    app.querySelectorAll('.item.previewing').forEach((x) => { x.classList.remove('previewing'); x.querySelector('.pv-link')?.setAttribute('aria-pressed', 'false'); });
+    li.classList.add('previewing'); li.querySelector('.pv-link')?.setAttribute('aria-pressed', 'true');
+    previewing = li;
+    ctl.highlight(iid, it.title);
+  }
+  // On narrow layouts the panel sits above the list; bring it into view on explicit requests.
+  if (revealPanel && matchMedia('(max-width: 1099px)').matches) app.querySelector('.cl-preview')?.scrollIntoView({ block: 'start', behavior: 'smooth' });
+}
+
+let dialogCtl = null;
+function openPreviewDialog(cid, iid) {
+  const c = byId.get(cid);
+  const dlg = document.getElementById('preview-dialog');
+  dlg.querySelector('h2').textContent = `${c.title} — live preview`;
+  dlg.querySelector('.pd-controls').innerHTML = `${deviceChips(c, 'dialog')}<button class="chip" data-action="pv-theme" data-scope="dialog" aria-pressed="${appTheme() === 'dark'}">🌙 Dark</button><button class="chip" data-action="pv-xray" data-scope="dialog" aria-pressed="false">Show all checks</button>`;
+  const host = dlg.querySelector('.pd-host');
+  dlg.querySelector('.pd-items').innerHTML = c.items.map((it, i) => `<button class="pd-item" data-iid="${it.id}" aria-pressed="${it.id === iid}"><span>${i + 1}</span>${esc(it.title)}<span class="badge ${it.priority}">${PRIORITY_LABEL[it.priority]}</span></button>`).join('');
+  dlg.showModal();
+  dialogCtl?.destroy();
+  dialogCtl = mountPreview(host, c, { theme: appTheme(), onBadge: (id) => selectDialogItem(id) });
+  dialogCtl.checklist = c;
+  if (iid) requestAnimationFrame(() => selectDialogItem(iid));
+}
+function selectDialogItem(iid) {
+  const dlg = document.getElementById('preview-dialog');
+  dlg.querySelectorAll('.pd-item').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.iid === iid)));
+  dlg.querySelector(`.pd-item[data-iid="${CSS.escape(iid)}"]`)?.scrollIntoView({ block: 'nearest' });
+  dialogCtl.highlight(iid, dialogCtl.checklist.items.find((x) => x.id === iid).title);
+}
+function controllersFor(scope) { return scope === 'dialog' ? [dialogCtl].filter(Boolean) : [previewCtl.get(scope)].filter(Boolean); }
+function handlePreviewControl(btn) {
+  const { action, scope } = btn.dataset;
+  if (action === 'pv-open') { openPreviewDialog(btn.dataset.cid, previewCtl.get(btn.dataset.cid)?.current); return true; }
+  if (action === 'pv-device') {
+    btn.parentElement.querySelectorAll('[data-action=pv-device]').forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+    controllersFor(scope).forEach((c) => c.setDevice(btn.dataset.device)); return true;
+  }
+  if (action === 'pv-theme') {
+    const on = btn.getAttribute('aria-pressed') !== 'true';
+    btn.setAttribute('aria-pressed', String(on));
+    controllersFor(scope).forEach((c) => c.setTheme(on ? 'dark' : 'light')); return true;
+  }
+  if (action === 'pv-xray') {
+    const on = btn.getAttribute('aria-pressed') !== 'true';
+    btn.setAttribute('aria-pressed', String(on));
+    controllersFor(scope).forEach((c) => c.xray(on)); return true;
+  }
+  return false;
+}
+
+function viewPreviews(category) {
+  const lists = DATA.checklists.filter((c) => !category || c.category === category);
+  return `<div class="wrap wide">
+    <div class="page-head"><h1 style="font-size:clamp(34px,5vw,52px)">Live previews</h1>
+      <p class="lead">Every checklist ships with a working example UI — ${DATA.checklists.reduce((a, c) => a + c.items.length, 0)} checks, each pinned to the element that satisfies it. Open one to explore it at desktop, tablet or phone size, in light or dark.</p>
+      <nav class="chips" aria-label="Categories"><a class="chip" href="#/previews" ${!category ? 'aria-current="page"' : ''}>All</a>${DATA.categories.map((c) => `<a class="chip" href="#/previews/${c.id}" ${category === c.id ? 'aria-current="page"' : ''}>${esc(c.name)}</a>`).join('')}</nav></div>
+    <div class="thumb-grid">${lists.map((c) => `<a class="card thumb-card" href="#/c/${c.id}">
+      <div class="thumb" data-preview-thumb="${c.id}" aria-hidden="true"></div>
+      <div class="card-top"><h3><span aria-hidden="true">${c.icon}</span> ${esc(c.title)}</h3><span class="tag">${esc(catName(c.category))}</span></div>
+      <p>${c.items.length} checks previewed</p></a>`).join('')}</div></div>`;
 }
 
 function viewMCP() {
@@ -399,6 +523,7 @@ function route() {
   else if (head === 'p') html = viewProject(rest[0]);
   else if (head === 'import') html = viewImport(rest.join('/'));
   else if (head === 'mcp') html = viewMCP();
+  else if (head === 'previews') html = viewPreviews(rest[0]);
   else html = viewNotFound();
   document.title = title;
   app.innerHTML = html;
@@ -408,9 +533,11 @@ function route() {
     if (on) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
   });
   refreshProgress();
+  previewing = null;
+  mountPagePreviews();
   if (current?.focusItem) {
     const el = app.querySelector(`.item[data-iid="${CSS.escape(current.focusItem)}"]`);
-    if (el) { el.scrollIntoView({ block: 'center' }); el.classList.add('flash'); el.querySelector('.check').focus({ preventScroll: true }); }
+    if (el) { el.scrollIntoView({ block: 'center' }); el.classList.add('flash'); el.querySelector('.check').focus({ preventScroll: true }); requestAnimationFrame(() => previewItem(el, false)); }
   } else window.scrollTo(0, 0);
 }
 
@@ -515,7 +642,27 @@ app.addEventListener('click', (e) => {
     save(); pendingImport = null; location.hash = `#/p/${pid}`;
   } else if (a === 'copy-code') copy(btn.parentElement.textContent.replace(/^Copy/, '').trim());
   else if (a === 'palette') openPalette();
+  else if (a === 'preview') previewItem(li);
+  else handlePreviewControl(btn);
 });
+// Hovering or focusing an item previews it (pointer devices only, so touch scrolling doesn't jump the panel).
+app.addEventListener('pointerover', (e) => {
+  if (e.pointerType !== 'mouse') return;
+  const li = e.target.closest('.item');
+  if (li && previewCtl.has(li.dataset.cid)) previewItem(li, false);
+});
+app.addEventListener('focusin', (e) => {
+  const li = e.target.closest('.item');
+  if (li && previewCtl.has(li.dataset.cid)) previewItem(li, false);
+});
+const previewDialog = document.getElementById('preview-dialog');
+previewDialog.addEventListener('click', (e) => {
+  const btn = e.target.closest('button');
+  if (e.target === previewDialog || btn?.dataset.action === 'pd-close') { previewDialog.close(); return; }
+  if (btn?.classList.contains('pd-item')) selectDialogItem(btn.dataset.iid);
+  else if (btn?.dataset.action) handlePreviewControl(btn);
+});
+previewDialog.addEventListener('close', () => { dialogCtl?.destroy(); dialogCtl = null; });
 document.querySelector('.topbar').addEventListener('click', (e) => {
   const a = e.target.closest('[data-action]')?.dataset.action;
   if (a === 'palette') openPalette();
@@ -584,6 +731,7 @@ document.addEventListener('keydown', (e) => {
     items[i].querySelector('.check').focus(); items[i].scrollIntoView({ block: 'nearest' });
   } else if (cur && e.key === 'x') setItem(cur, cur.dataset.state === 'done' ? 'todo' : 'done');
   else if (cur && e.key === 'n') setItem(cur, cur.dataset.state === 'na' ? 'todo' : 'na');
+  else if (cur && e.key === 'p') previewItem(cur);
 });
 
 // ---------- boot ----------

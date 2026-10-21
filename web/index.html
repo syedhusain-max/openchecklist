@@ -26,6 +26,7 @@
       </a>
       <nav class="nav" aria-label="Primary">
         <a href="#/browse">Browse</a>
+        <a href="#/previews">Previews</a>
         <a href="#/kits">Kits</a>
         <a href="#/projects">Projects</a>
         <a href="#/mcp">MCP</a>
@@ -52,7 +53,7 @@
   </footer>
 
   <nav class="mobile-nav" aria-label="Primary (mobile)">
-    <a href="#/">Home</a><a href="#/browse">Browse</a><a href="#/kits">Kits</a><a href="#/projects">Projects</a><a href="#/mcp">MCP</a>
+    <a href="#/">Home</a><a href="#/browse">Browse</a><a href="#/previews">Previews</a><a href="#/kits">Kits</a><a href="#/projects">Projects</a>
   </nav>
 
   <dialog id="palette" class="palette" aria-label="Search">
@@ -75,6 +76,11 @@
         <button value="create" class="btn primary">Create project</button>
       </div>
     </form>
+  </dialog>
+
+  <dialog id="preview-dialog" class="pv-dialog" aria-labelledby="pd-title">
+    <header class="pd-head"><h2 id="pd-title">Live preview</h2><div class="pd-controls"></div><button class="icon-btn" data-action="pd-close" aria-label="Close preview">✕</button></header>
+    <div class="pd-body"><nav class="pd-items" aria-label="Checks"></nav><div class="pd-host"></div></div>
   </dialog>
 
   <div id="toast" class="toast" role="status" aria-live="polite"></div>

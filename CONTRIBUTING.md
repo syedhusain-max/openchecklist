@@ -22,8 +22,9 @@
    - `priority`: `must` (blocks launch), `should` (expected quality), `nice` (polish). At least one `must`.
    - `wcag` is optional, formatted like `2.5.8`, and only when the item maps to a real success criterion.
    - `tip` is optional — a practical aside, not a restatement.
-3. Write it yourself. Don't paste content from other checklist sites or books.
-4. Run `npm test`, then open a pull request.
+3. Add a live preview in `web/previews.js` keyed by the checklist id, and mark the element that satisfies each item with `data-check="<item-id>"` (several ids can share an element, space-separated). Use the classes in `web/preview-styles.js`; for non-visual items, use a `.spec` note.
+4. Write it yourself. Don't paste content from other checklist sites or books.
+5. Run `npm test`, then open a pull request.
 
 ## Code
 
