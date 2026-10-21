@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "OpenChecklist data",
+  "type": "object",
+  "required": ["version", "categories", "checklists", "kits"],
+  "properties": {
+    "version": { "type": "integer" },
+    "categories": {
+      "type": "array",
+      "items": { "type": "object", "required": ["id", "name", "description"], "properties": { "id": { "type": "string" }, "name": { "type": "string" }, "description": { "type": "string" } } }
+    },
+    "checklists": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "category", "title", "icon", "description", "items"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z0-9-]+/[a-z0-9]+(-[a-z0-9]+)*$" },
+          "category": { "type": "string" },
+          "title": { "type": "string" },
+          "icon": { "type": "string" },
+          "description": { "type": "string" },
+          "items": {
+            "type": "array",
+            "minItems": 3,
+            "items": {
+              "type": "object",
+              "required": ["id", "title", "description", "priority"],
+              "properties": {
+                "id": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$" },
+                "title": { "type": "string" },
+                "description": { "type": "string" },
+                "tip": { "type": "string" },
+                "priority": { "enum": ["must", "should", "nice"] },
+                "tags": { "type": "array", "items": { "type": "string" } },
+                "wcag": { "type": "string", "pattern": "^\\d\\.\\d+\\.\\d+$" }
+              },
+              "additionalProperties": false
+            }
+          }
+        }
+      }
+    },
+    "kits": {
+      "type": "array",
+      "items": { "type": "object", "required": ["id", "title", "description", "checklists"], "properties": { "id": { "type": "string" }, "title": { "type": "string" }, "icon": { "type": "string" }, "description": { "type": "string" }, "checklists": { "type": "array", "items": { "type": "string" } } } }
+    }
+  }
+}

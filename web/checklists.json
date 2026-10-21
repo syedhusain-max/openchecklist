@@ -1,0 +1,465 @@
+{
+  "$schema": "./schema.json",
+  "version": 1,
+  "categories": [
+    { "id": "website", "name": "Website", "description": "Marketing and content pages that need to inform, convince and convert." },
+    { "id": "web-app", "name": "Web app", "description": "Logged-in product screens where people get real work done." },
+    { "id": "mobile", "name": "Mobile", "description": "Native and mobile-first screens built for thumbs, interruptions and small screens." },
+    { "id": "design-system", "name": "Design system", "description": "Foundations and components that every other screen is built from." },
+    { "id": "flows", "name": "Flows", "description": "Multi-step journeys where a single broken step loses the user." }
+  ],
+  "checklists": [
+    {
+      "id": "website/landing-page", "category": "website", "title": "Landing Page", "icon": "🚀",
+      "description": "A single page whose job is to turn a visitor into a sign-up, lead or buyer.",
+      "items": [
+        { "id": "value-prop", "title": "Value proposition above the fold", "description": "A headline that says what it is and who it is for, readable in under five seconds.", "tip": "Test it: cover the logo — could the headline belong to a competitor?", "priority": "must", "tags": ["copy", "ux"] },
+        { "id": "primary-cta", "title": "One primary call to action", "description": "A single, visually dominant action repeated at natural decision points down the page.", "priority": "must", "tags": ["ux", "visual"] },
+        { "id": "social-proof", "title": "Social proof near the CTA", "description": "Logos, numbers, reviews or quotes placed where doubt is highest — next to the ask.", "priority": "should", "tags": ["copy"] },
+        { "id": "product-visual", "title": "Show the product", "description": "A real screenshot, demo or video instead of abstract illustration only.", "priority": "should", "tags": ["visual"] },
+        { "id": "objections", "title": "Answer objections", "description": "Pricing hints, security, setup time and cancellation addressed before the visitor has to ask.", "priority": "should", "tags": ["copy"] },
+        { "id": "lcp", "title": "Fast largest contentful paint", "description": "Hero renders in under 2.5s on a mid-range phone over 4G; hero image is sized and preloaded.", "priority": "must", "tags": ["perf"] },
+        { "id": "meta", "title": "Share metadata", "description": "Title, description and a 1200×630 Open Graph image so links look intentional when shared.", "priority": "should", "tags": ["seo"] },
+        { "id": "mobile-cta", "title": "CTA reachable on mobile", "description": "Primary action visible without hunting on a 375px screen; consider a sticky bar on long pages.", "priority": "should", "tags": ["ux", "mobile"] }
+      ]
+    },
+    {
+      "id": "website/pricing", "category": "website", "title": "Pricing", "icon": "💳",
+      "description": "Helps a buyer pick the right plan and feel safe paying for it.",
+      "items": [
+        { "id": "plan-names", "title": "Plans named by who they serve", "description": "Plan names and one-line summaries map to customer types, not internal tiers.", "priority": "should", "tags": ["copy"] },
+        { "id": "recommended", "title": "A recommended plan", "description": "One plan is highlighted to reduce choice paralysis.", "priority": "should", "tags": ["ux", "visual"] },
+        { "id": "billing-toggle", "title": "Clear billing period", "description": "Monthly/annual toggle shows the saving and the price per month the user actually pays.", "tip": "Show the annual total too — surprises at checkout kill trust.", "priority": "must", "tags": ["copy", "ux"] },
+        { "id": "comparison", "title": "Feature comparison", "description": "A scannable table of differences between plans, with shared features grouped instead of repeated.", "priority": "should", "tags": ["ux"] },
+        { "id": "currency-tax", "title": "Currency and tax stated", "description": "Currency, whether tax is included, and regional pricing are explicit.", "priority": "must", "tags": ["copy"] },
+        { "id": "enterprise", "title": "Path for large teams", "description": "A contact or custom option for buyers who don't fit the published plans.", "priority": "nice", "tags": ["ux"] },
+        { "id": "faq", "title": "Billing FAQ", "description": "Refunds, cancellation, trials and plan changes answered on the page.", "priority": "should", "tags": ["copy"] }
+      ]
+    },
+    {
+      "id": "website/blog-post", "category": "website", "title": "Blog Post", "icon": "📝",
+      "description": "Long-form content that should be comfortable to read and easy to share.",
+      "items": [
+        { "id": "measure", "title": "Comfortable line length", "description": "Body text between 60 and 80 characters per line with at least 1.5 line height.", "priority": "must", "tags": ["visual", "a11y"] },
+        { "id": "meta-info", "title": "Author, date and reading time", "description": "Shown near the title so readers can judge freshness and commitment.", "priority": "should", "tags": ["copy"] },
+        { "id": "headings", "title": "Real heading hierarchy", "description": "One h1, sequential h2/h3 — doubles as a skimmable outline and screen-reader navigation.", "priority": "must", "tags": ["a11y", "seo"], "wcag": "1.3.1" },
+        { "id": "alt", "title": "Images have alt text", "description": "Informative images describe their content; decorative ones use empty alt.", "priority": "must", "tags": ["a11y"], "wcag": "1.1.1" },
+        { "id": "toc", "title": "Table of contents for long posts", "description": "Anchored links for posts longer than ~1,500 words.", "priority": "nice", "tags": ["ux"] },
+        { "id": "next", "title": "A next step at the end", "description": "Related posts, newsletter sign-up or product CTA so the reader doesn't hit a dead end.", "priority": "should", "tags": ["ux"] },
+        { "id": "code", "title": "Readable code blocks", "description": "Syntax highlighting, horizontal scroll instead of wrapping, and a copy button.", "priority": "nice", "tags": ["visual"] }
+      ]
+    },
+    {
+      "id": "website/contact", "category": "website", "title": "Contact Us", "icon": "✉️",
+      "description": "Gets people to the right human with the least effort.",
+      "items": [
+        { "id": "routes", "title": "Routes by intent", "description": "Separate paths for sales, support, press and partnerships so messages land with the right team.", "priority": "should", "tags": ["ux"] },
+        { "id": "short-form", "title": "Minimal form", "description": "Only the fields needed to reply — usually name, email and message.", "priority": "must", "tags": ["ux"] },
+        { "id": "response-time", "title": "Expected response time", "description": "Tell people when they'll hear back, before and after submitting.", "priority": "should", "tags": ["copy"] },
+        { "id": "self-serve", "title": "Self-serve shortcut", "description": "Link to help center or status page for questions that don't need a person.", "priority": "should", "tags": ["ux"] },
+        { "id": "alt-channels", "title": "Alternative channels", "description": "Email address, phone or chat for people who won't fill a form.", "priority": "nice", "tags": ["ux"] },
+        { "id": "spam", "title": "Spam protection without friction", "description": "Honeypots or invisible checks before resorting to CAPTCHAs.", "priority": "should", "tags": ["security", "a11y"] }
+      ]
+    },
+    {
+      "id": "website/404", "category": "website", "title": "404 Page", "icon": "🧭",
+      "description": "Turns a dead end into a way back.",
+      "items": [
+        { "id": "plain", "title": "Plain-language explanation", "description": "Says the page couldn't be found without jargon like 'HTTP 404' as the headline.", "priority": "must", "tags": ["copy"] },
+        { "id": "search", "title": "Search box", "description": "Lets people look for what they wanted right there.", "priority": "should", "tags": ["ux"] },
+        { "id": "links", "title": "Useful links", "description": "Home plus the most visited sections.", "priority": "must", "tags": ["ux"] },
+        { "id": "status", "title": "Correct status code", "description": "Server actually returns 404 so the URL drops out of search indexes.", "priority": "must", "tags": ["seo"] },
+        { "id": "report", "title": "Report a broken link", "description": "A lightweight way to flag where the bad link came from.", "priority": "nice", "tags": ["ux"] },
+        { "id": "on-brand", "title": "Keeps site navigation", "description": "Header and footer stay so the user isn't stranded.", "priority": "should", "tags": ["ux"] }
+      ]
+    },
+    {
+      "id": "website/faq", "category": "website", "title": "FAQ", "icon": "❓",
+      "description": "Answers repeated questions before they become support tickets.",
+      "items": [
+        { "id": "real-questions", "title": "Questions customers actually ask", "description": "Sourced from support tickets and sales calls, phrased in their words.", "priority": "must", "tags": ["copy"] },
+        { "id": "grouped", "title": "Grouped by topic", "description": "Billing, account, product, security — not one long list.", "priority": "should", "tags": ["ux"] },
+        { "id": "accordion-a11y", "title": "Accessible accordions", "description": "Triggers are buttons with aria-expanded; content is reachable by keyboard.", "priority": "must", "tags": ["a11y"], "wcag": "4.1.2" },
+        { "id": "deep-links", "title": "Linkable answers", "description": "Each answer has an anchor so support can link directly to it.", "priority": "nice", "tags": ["ux"] },
+        { "id": "search", "title": "Searchable", "description": "Filter or page search for FAQs with more than ~15 entries.", "priority": "nice", "tags": ["ux"] },
+        { "id": "escape", "title": "Contact fallback", "description": "A clear way to reach a person when the answer isn't there.", "priority": "should", "tags": ["ux"] }
+      ]
+    },
+    {
+      "id": "website/footer", "category": "website", "title": "Footer", "icon": "🦶",
+      "description": "The safety net for people who scrolled all the way down looking for something.",
+      "items": [
+        { "id": "groups", "title": "Links grouped by intent", "description": "Product, company, resources, legal — each with a short heading.", "priority": "should", "tags": ["ux"] },
+        { "id": "legal", "title": "Legal links", "description": "Privacy, terms, cookie settings and imprint where required.", "priority": "must", "tags": ["legal"] },
+        { "id": "contrast", "title": "Readable contrast", "description": "Footer text meets 4.5:1 even though it's de-emphasised.", "priority": "must", "tags": ["a11y"], "wcag": "1.4.3" },
+        { "id": "newsletter", "title": "Newsletter or social", "description": "A low-commitment way to stay in touch.", "priority": "nice", "tags": ["ux"] },
+        { "id": "locale", "title": "Language / region switcher", "description": "For multi-locale sites, discoverable here as well as in the header.", "priority": "nice", "tags": ["i18n"] }
+      ]
+    },
+    {
+      "id": "web-app/dashboard", "category": "web-app", "title": "Dashboard", "icon": "📊",
+      "description": "The home screen after login: what changed, what matters, what to do next.",
+      "items": [
+        { "id": "orient", "title": "Orientation", "description": "Tells returning users what changed since their last visit.", "priority": "should", "tags": ["ux"] },
+        { "id": "kpis", "title": "A few meaningful metrics", "description": "3–5 numbers tied to the user's goals, each with a time range and comparison.", "tip": "A number without a comparison is trivia.", "priority": "must", "tags": ["ux", "data"] },
+        { "id": "next-action", "title": "Next best action", "description": "Surfaces tasks that need a decision instead of burying them in other views.", "priority": "should", "tags": ["ux"] },
+        { "id": "resume", "title": "Resume work", "description": "Recently opened or edited items one click away.", "priority": "should", "tags": ["ux"] },
+        { "id": "empty", "title": "First-run state", "description": "A useful empty dashboard for new accounts with sample data or setup steps.", "priority": "must", "tags": ["ux"] },
+        { "id": "loading", "title": "Independent loading", "description": "Widgets load and fail independently with skeletons, not one global spinner.", "priority": "should", "tags": ["perf", "ux"] },
+        { "id": "charts-a11y", "title": "Charts are accessible", "description": "Data available as a table or text summary; colour isn't the only encoding.", "priority": "should", "tags": ["a11y", "data"], "wcag": "1.4.1" }
+      ]
+    },
+    {
+      "id": "web-app/settings", "category": "web-app", "title": "Settings", "icon": "⚙️",
+      "description": "Where users make the product theirs without fear of breaking something.",
+      "items": [
+        { "id": "grouping", "title": "Grouped and scoped", "description": "Personal, workspace and billing settings are separated and labelled by who they affect.", "priority": "must", "tags": ["ux"] },
+        { "id": "save-model", "title": "Consistent save model", "description": "Either autosave with confirmation or explicit save — never mixed on one page.", "priority": "must", "tags": ["ux"] },
+        { "id": "unsaved", "title": "Unsaved changes warning", "description": "Leaving with pending edits prompts the user.", "priority": "should", "tags": ["ux"] },
+        { "id": "search", "title": "Settings search", "description": "For apps with more than a couple of pages of settings.", "priority": "nice", "tags": ["ux"] },
+        { "id": "danger", "title": "Danger zone isolated", "description": "Destructive actions are visually separated and require confirmation.", "priority": "must", "tags": ["ux", "security"] },
+        { "id": "defaults", "title": "Explains impact", "description": "Each non-obvious setting says what changes and for whom.", "priority": "should", "tags": ["copy"] }
+      ]
+    },
+    {
+      "id": "web-app/data-table", "category": "web-app", "title": "Data Table", "icon": "🧮",
+      "description": "Dense information people need to scan, compare and act on in bulk.",
+      "items": [
+        { "id": "alignment", "title": "Aligned columns", "description": "Text left, numbers right with tabular figures, consistent units in headers.", "priority": "must", "tags": ["visual", "data"] },
+        { "id": "sort-filter", "title": "Sort and filter", "description": "Sortable headers with visible sort state; filters reflected in the URL.", "priority": "should", "tags": ["ux"] },
+        { "id": "sticky", "title": "Sticky header and first column", "description": "Context stays visible while scrolling large tables.", "priority": "should", "tags": ["ux"] },
+        { "id": "bulk", "title": "Bulk actions", "description": "Select rows, see the count selected, act on all at once.", "priority": "should", "tags": ["ux"] },
+        { "id": "pagination", "title": "Predictable pagination", "description": "Page size control and total count, or virtualised scrolling for big sets.", "priority": "should", "tags": ["perf", "ux"] },
+        { "id": "semantics", "title": "Table semantics", "description": "Real table, th with scope, and a caption — not a grid of divs.", "priority": "must", "tags": ["a11y"], "wcag": "1.3.1" },
+        { "id": "empty-filter", "title": "No-results state", "description": "Distinguishes 'no data yet' from 'filters hid everything' and offers to clear filters.", "priority": "must", "tags": ["ux"] },
+        { "id": "responsive", "title": "Small-screen strategy", "description": "Horizontal scroll with a hint, or a card layout below a breakpoint.", "priority": "should", "tags": ["mobile"] }
+      ]
+    },
+    {
+      "id": "web-app/empty-state", "category": "web-app", "title": "Empty State", "icon": "🫙",
+      "description": "The moment between nothing and value — often a user's first impression.",
+      "items": [
+        { "id": "why", "title": "Explains why it's empty", "description": "New account, no results, or no permission — each gets its own message.", "priority": "must", "tags": ["copy"] },
+        { "id": "action", "title": "Primary action to fill it", "description": "One clear button that creates the first item or imports data.", "priority": "must", "tags": ["ux"] },
+        { "id": "preview", "title": "Shows what good looks like", "description": "An illustration, sample or template of the populated state.", "priority": "should", "tags": ["visual"] },
+        { "id": "learn", "title": "Link to learn more", "description": "A guide or short video for users who aren't ready to act.", "priority": "nice", "tags": ["ux"] },
+        { "id": "tone", "title": "Encouraging tone", "description": "Copy is helpful, never blaming ('You haven't…').", "priority": "should", "tags": ["copy"] }
+      ]
+    },
+    {
+      "id": "web-app/onboarding", "category": "web-app", "title": "Onboarding", "icon": "👋",
+      "description": "Gets a new user to their first success as fast as possible.",
+      "items": [
+        { "id": "aha", "title": "Defined first success", "description": "Onboarding is built around one measurable 'aha' action.", "priority": "must", "tags": ["ux"] },
+        { "id": "ask-less", "title": "Ask only what personalises", "description": "Every question changes the experience; everything else waits.", "priority": "must", "tags": ["ux"] },
+        { "id": "progress", "title": "Visible progress", "description": "A step count or checklist shows how much is left.", "priority": "should", "tags": ["ux"] },
+        { "id": "skip", "title": "Skippable and resumable", "description": "Users can skip and come back without losing what they entered.", "priority": "should", "tags": ["ux"] },
+        { "id": "sample", "title": "Sample data", "description": "Optional demo content so users can explore before investing.", "priority": "nice", "tags": ["ux"] },
+        { "id": "invite", "title": "Invite teammates at the right time", "description": "Prompt after first value, not before.", "priority": "nice", "tags": ["growth"] }
+      ]
+    },
+    {
+      "id": "web-app/notifications", "category": "web-app", "title": "Notifications", "icon": "🔔",
+      "description": "Keeps people informed without training them to ignore you.",
+      "items": [
+        { "id": "actionable", "title": "Actionable content", "description": "Each notification says who did what and links straight to it.", "priority": "must", "tags": ["copy", "ux"] },
+        { "id": "read-state", "title": "Read / unread state", "description": "Clear unread indicator, mark one or all as read.", "priority": "must", "tags": ["ux"] },
+        { "id": "grouping", "title": "Grouped bursts", "description": "Similar events collapse ('5 comments on Q3 plan').", "priority": "should", "tags": ["ux"] },
+        { "id": "prefs", "title": "Granular preferences", "description": "Per channel and per event type, reachable from the notification itself.", "priority": "should", "tags": ["ux"] },
+        { "id": "live-region", "title": "Announced to assistive tech", "description": "New notifications use a polite live region, not focus theft.", "priority": "should", "tags": ["a11y"], "wcag": "4.1.3" },
+        { "id": "empty", "title": "Caught-up state", "description": "A calm message when there's nothing new.", "priority": "nice", "tags": ["copy"] }
+      ]
+    },
+    {
+      "id": "web-app/billing", "category": "web-app", "title": "Billing", "icon": "🧾",
+      "description": "Where trust is won or lost: plans, invoices and payment methods.",
+      "items": [
+        { "id": "current", "title": "Current plan at a glance", "description": "Plan, price, renewal date and usage against limits.", "priority": "must", "tags": ["ux"] },
+        { "id": "change-plan", "title": "Self-serve plan changes", "description": "Upgrade and downgrade with a prorated preview before confirming.", "priority": "must", "tags": ["ux"] },
+        { "id": "invoices", "title": "Downloadable invoices", "description": "History with PDF downloads and editable billing details (address, tax ID).", "priority": "must", "tags": ["ux", "legal"] },
+        { "id": "payment", "title": "Payment method management", "description": "Update card, see last 4 digits and expiry, warn before expiry.", "priority": "must", "tags": ["ux"] },
+        { "id": "failed", "title": "Failed payment recovery", "description": "Clear banner, retry and grace period before access is cut.", "priority": "should", "tags": ["ux"] },
+        { "id": "cancel", "title": "Findable cancellation", "description": "Cancel is available here, not hidden behind support.", "priority": "must", "tags": ["ux", "legal"] }
+      ]
+    },
+    {
+      "id": "mobile/login", "category": "mobile", "title": "Login", "icon": "🔐",
+      "description": "The fastest possible path back into the app.",
+      "items": [
+        { "id": "autofill", "title": "Password manager friendly", "description": "Correct content types / autocomplete hints so credentials autofill.", "priority": "must", "tags": ["ux", "security"], "wcag": "1.3.5" },
+        { "id": "keyboard", "title": "Right keyboard", "description": "Email keyboard for email, return key moves to the next field.", "priority": "must", "tags": ["mobile"] },
+        { "id": "social", "title": "Platform sign-in", "description": "Sign in with Apple/Google where accounts allow it.", "priority": "should", "tags": ["ux"] },
+        { "id": "biometric", "title": "Biometric re-entry", "description": "Face ID / fingerprint for returning users after first login.", "priority": "should", "tags": ["security", "mobile"] },
+        { "id": "show-password", "title": "Show password toggle", "description": "Reduces typos on small keyboards.", "priority": "should", "tags": ["ux"] },
+        { "id": "errors", "title": "Specific, safe errors", "description": "Helpful messages that don't reveal whether an account exists.", "priority": "must", "tags": ["security", "copy"] },
+        { "id": "forgot", "title": "Forgot password nearby", "description": "Visible next to the password field, pre-fills the entered email.", "priority": "must", "tags": ["ux"] }
+      ]
+    },
+    {
+      "id": "mobile/onboarding", "category": "mobile", "title": "Onboarding", "icon": "📱",
+      "description": "First launch that earns permission and attention.",
+      "items": [
+        { "id": "value-first", "title": "Value before sign-up", "description": "Let people try something before demanding an account where possible.", "priority": "should", "tags": ["ux"] },
+        { "id": "short", "title": "Three screens or fewer", "description": "Intro carousels longer than that get skipped.", "priority": "should", "tags": ["ux"] },
+        { "id": "permissions", "title": "Permissions in context", "description": "Ask for camera, location or notifications when the feature needs it, with a pre-prompt.", "priority": "must", "tags": ["ux", "privacy"] },
+        { "id": "skip", "title": "Skip is visible", "description": "A clear skip control on every intro screen.", "priority": "must", "tags": ["ux"] },
+        { "id": "safe-area", "title": "Respects safe areas", "description": "Content clears notches, home indicator and dynamic island.", "priority": "must", "tags": ["mobile", "visual"] },
+        { "id": "personalise", "title": "Personalisation pays off", "description": "Choices made during onboarding visibly change the first screen.", "priority": "nice", "tags": ["ux"] }
+      ]
+    },
+    {
+      "id": "mobile/paywall", "category": "mobile", "title": "Paywall", "icon": "💎",
+      "description": "Converts without dark patterns and passes store review.",
+      "items": [
+        { "id": "benefits", "title": "Benefits, not features", "description": "Three to four outcomes the user gets, with icons.", "priority": "should", "tags": ["copy"] },
+        { "id": "price-clarity", "title": "Real price is prominent", "description": "Billed amount and period are as visible as any 'per week' framing.", "priority": "must", "tags": ["legal", "copy"] },
+        { "id": "trial", "title": "Trial terms explicit", "description": "When the trial ends and what is charged, with an optional reminder.", "priority": "must", "tags": ["legal"] },
+        { "id": "close", "title": "Close is easy to find", "description": "A visible dismiss control with an adequate hit area.", "priority": "must", "tags": ["ux", "a11y"], "wcag": "2.5.8" },
+        { "id": "restore", "title": "Restore purchases", "description": "Required by app stores and saves support tickets.", "priority": "must", "tags": ["legal"] },
+        { "id": "legal-links", "title": "Terms and privacy links", "description": "Visible on the paywall itself.", "priority": "must", "tags": ["legal"] }
+      ]
+    },
+    {
+      "id": "mobile/tab-bar", "category": "mobile", "title": "Tab Bar", "icon": "🗂️",
+      "description": "Primary navigation that should be learnable in seconds.",
+      "items": [
+        { "id": "count", "title": "Three to five tabs", "description": "More belongs in a 'More' or profile area.", "priority": "should", "tags": ["ux"] },
+        { "id": "labels", "title": "Icons with labels", "description": "Text labels under icons; icons alone are ambiguous.", "priority": "must", "tags": ["ux", "a11y"] },
+        { "id": "active", "title": "Clear active state", "description": "Selected tab differs by more than colour alone.", "priority": "must", "tags": ["a11y", "visual"], "wcag": "1.4.1" },
+        { "id": "state", "title": "Preserves state", "description": "Switching tabs keeps scroll position and stack; re-tapping scrolls to top.", "priority": "should", "tags": ["ux"] },
+        { "id": "targets", "title": "Comfortable targets", "description": "At least 44pt (iOS) / 48dp (Android) per tab.", "priority": "must", "tags": ["a11y", "mobile"] },
+        { "id": "badges", "title": "Restrained badges", "description": "Badges only for things that need attention, cleared when seen.", "priority": "nice", "tags": ["ux"] }
+      ]
+    },
+    {
+      "id": "mobile/push-permission", "category": "mobile", "title": "Push Notification Opt-in", "icon": "📣",
+      "description": "Earns the right to interrupt.",
+      "items": [
+        { "id": "timing", "title": "Ask after value", "description": "Request after a moment where notifications clearly help, never on first launch.", "priority": "must", "tags": ["ux"] },
+        { "id": "pre-prompt", "title": "Soft pre-prompt", "description": "An in-app explanation before the one-shot system dialog.", "priority": "should", "tags": ["ux"] },
+        { "id": "examples", "title": "Concrete examples", "description": "Show what kind of notifications they'll get and how often.", "priority": "should", "tags": ["copy"] },
+        { "id": "denied", "title": "Graceful when denied", "description": "App works fine; settings explain how to enable later.", "priority": "must", "tags": ["ux"] },
+        { "id": "control", "title": "In-app controls", "description": "Per-category toggles inside the app, not just OS settings.", "priority": "should", "tags": ["ux"] }
+      ]
+    },
+    {
+      "id": "mobile/search", "category": "mobile", "title": "Search", "icon": "🔎",
+      "description": "Finding things fast on a small screen with a clumsy keyboard.",
+      "items": [
+        { "id": "recent", "title": "Recent and suggested", "description": "Focused empty field shows recent searches and popular queries.", "priority": "should", "tags": ["ux"] },
+        { "id": "instant", "title": "Results as you type", "description": "Debounced live results with highlighted matches.", "priority": "should", "tags": ["ux", "perf"] },
+        { "id": "typos", "title": "Typo tolerant", "description": "Fuzzy matching and 'did you mean' for misspellings.", "priority": "should", "tags": ["ux"] },
+        { "id": "clear", "title": "Clear and cancel", "description": "One tap to clear text, another to exit search.", "priority": "must", "tags": ["ux"] },
+        { "id": "no-results", "title": "Helpful no-results", "description": "Suggest broader terms, categories or removing filters.", "priority": "must", "tags": ["ux"] },
+        { "id": "keyboard-dismiss", "title": "Keyboard gets out of the way", "description": "Scrolling results dismisses the keyboard.", "priority": "should", "tags": ["mobile"] }
+      ]
+    },
+    {
+      "id": "design-system/button", "category": "design-system", "title": "Button", "icon": "🔘",
+      "description": "The most used interactive component — every state matters.",
+      "items": [
+        { "id": "hierarchy", "title": "Clear hierarchy", "description": "Primary, secondary, tertiary and destructive variants with defined usage.", "priority": "must", "tags": ["visual"] },
+        { "id": "states", "title": "All states designed", "description": "Default, hover, focus-visible, active, disabled and loading.", "priority": "must", "tags": ["visual", "a11y"] },
+        { "id": "focus", "title": "Visible focus ring", "description": "At least 3:1 contrast against adjacent colours.", "priority": "must", "tags": ["a11y"], "wcag": "2.4.7" },
+        { "id": "target", "title": "Minimum target size", "description": "24×24 CSS px minimum; 44px recommended on touch.", "priority": "must", "tags": ["a11y"], "wcag": "2.5.8" },
+        { "id": "labels", "title": "Verb-first labels", "description": "'Save changes' beats 'OK'; icon-only buttons have an accessible name.", "priority": "must", "tags": ["copy", "a11y"] },
+        { "id": "loading", "title": "Loading keeps width", "description": "Spinner replaces content without layout shift and prevents double submit.", "priority": "should", "tags": ["ux"] },
+        { "id": "element", "title": "Right element", "description": "<button> for actions, <a> for navigation.", "priority": "must", "tags": ["a11y", "code"] }
+      ]
+    },
+    {
+      "id": "design-system/input-field", "category": "design-system", "title": "Input Field", "icon": "⌨️",
+      "description": "Where users give you data — make it forgiving.",
+      "items": [
+        { "id": "label", "title": "Persistent visible label", "description": "Placeholder is never the only label.", "priority": "must", "tags": ["a11y"], "wcag": "3.3.2" },
+        { "id": "help", "title": "Helper text", "description": "Format hints shown before the user makes a mistake.", "priority": "should", "tags": ["copy"] },
+        { "id": "error", "title": "Inline error with fix", "description": "Error text explains how to fix it, linked via aria-describedby; not colour alone.", "priority": "must", "tags": ["a11y", "copy"], "wcag": "3.3.1" },
+        { "id": "states", "title": "All states", "description": "Default, hover, focus, filled, error, disabled, read-only.", "priority": "must", "tags": ["visual"] },
+        { "id": "types", "title": "Correct input types", "description": "type, inputmode and autocomplete set so mobile keyboards and autofill work.", "priority": "must", "tags": ["mobile", "code"] },
+        { "id": "optional", "title": "Required vs optional marked", "description": "Mark the minority consistently.", "priority": "should", "tags": ["ux"] },
+        { "id": "counter", "title": "Character limits", "description": "Show remaining characters near the limit instead of truncating silently.", "priority": "nice", "tags": ["ux"] }
+      ]
+    },
+    {
+      "id": "design-system/modal", "category": "design-system", "title": "Modal", "icon": "🪟",
+      "description": "Interrupts on purpose — so it has to be worth it and easy to escape.",
+      "items": [
+        { "id": "justified", "title": "Justified interruption", "description": "Used for focused tasks or confirmations, not for content that could live on the page.", "priority": "should", "tags": ["ux"] },
+        { "id": "focus-trap", "title": "Focus managed", "description": "Focus moves in on open, is trapped while open, and returns to the trigger on close.", "priority": "must", "tags": ["a11y"], "wcag": "2.4.3" },
+        { "id": "escape", "title": "Multiple ways out", "description": "Close button, Esc key and (for non-destructive) backdrop click.", "priority": "must", "tags": ["ux", "a11y"] },
+        { "id": "semantics", "title": "Dialog semantics", "description": "role=dialog/aria-modal or native <dialog>, labelled by its title.", "priority": "must", "tags": ["a11y"] },
+        { "id": "scroll", "title": "Scroll handled", "description": "Body scroll locked; long content scrolls inside with sticky actions.", "priority": "should", "tags": ["ux"] },
+        { "id": "mobile", "title": "Mobile presentation", "description": "Full-screen or bottom sheet on small screens.", "priority": "should", "tags": ["mobile"] }
+      ]
+    },
+    {
+      "id": "design-system/toast", "category": "design-system", "title": "Toast", "icon": "🍞",
+      "description": "Brief, non-blocking feedback.",
+      "items": [
+        { "id": "short", "title": "Short and specific", "description": "One line describing what happened ('Invoice sent').", "priority": "must", "tags": ["copy"] },
+        { "id": "undo", "title": "Undo for reversible actions", "description": "Prefer undo over 'Are you sure?' dialogs.", "priority": "should", "tags": ["ux"] },
+        { "id": "timing", "title": "Enough time to read", "description": "Persists on hover/focus; actionable toasts don't auto-dismiss too fast.", "priority": "must", "tags": ["a11y"], "wcag": "2.2.1" },
+        { "id": "announce", "title": "Announced", "description": "Rendered in a live region (status/alert by severity).", "priority": "must", "tags": ["a11y"], "wcag": "4.1.3" },
+        { "id": "stack", "title": "Stacking rules", "description": "Max visible count, consistent position, doesn't cover primary actions.", "priority": "should", "tags": ["visual"] },
+        { "id": "not-errors", "title": "Not for critical errors", "description": "Errors that need action stay inline or in a banner.", "priority": "should", "tags": ["ux"] }
+      ]
+    },
+    {
+      "id": "design-system/tooltip", "category": "design-system", "title": "Tooltip", "icon": "💬",
+      "description": "Supplementary hints, never essential information.",
+      "items": [
+        { "id": "supplementary", "title": "Supplementary only", "description": "Nothing required to complete a task lives only in a tooltip.", "priority": "must", "tags": ["ux"] },
+        { "id": "triggers", "title": "Hover and focus", "description": "Appears on keyboard focus too, not just mouse hover.", "priority": "must", "tags": ["a11y"], "wcag": "1.4.13" },
+        { "id": "dismiss", "title": "Dismissible and hoverable", "description": "Esc closes it; pointer can move onto it without it vanishing.", "priority": "must", "tags": ["a11y"], "wcag": "1.4.13" },
+        { "id": "touch", "title": "Touch alternative", "description": "On touch devices use a tap-to-reveal or inline text instead.", "priority": "should", "tags": ["mobile"] },
+        { "id": "position", "title": "Smart positioning", "description": "Flips to stay in the viewport and points at its trigger.", "priority": "should", "tags": ["visual"] }
+      ]
+    },
+    {
+      "id": "design-system/color-system", "category": "design-system", "title": "Color System", "icon": "🎨",
+      "description": "A palette that works in every theme and for every eye.",
+      "items": [
+        { "id": "semantic", "title": "Semantic tokens", "description": "Components use roles (surface, text-muted, danger) not raw hex values.", "priority": "must", "tags": ["code"] },
+        { "id": "contrast", "title": "Contrast-checked pairs", "description": "Text pairs meet 4.5:1 (3:1 for large text and UI).", "priority": "must", "tags": ["a11y"], "wcag": "1.4.3" },
+        { "id": "dark", "title": "Dark theme designed, not inverted", "description": "Elevation, saturation and shadows rethought for dark surfaces.", "priority": "should", "tags": ["visual"] },
+        { "id": "status", "title": "Status colours plus icons", "description": "Success, warning, danger and info never rely on colour alone.", "priority": "must", "tags": ["a11y"], "wcag": "1.4.1" },
+        { "id": "scales", "title": "Consistent scales", "description": "Each hue has a ramp with perceptually even steps.", "priority": "should", "tags": ["visual"] },
+        { "id": "data-viz", "title": "Data-viz palette", "description": "A separate categorical palette that stays distinguishable for colour-blind users.", "priority": "nice", "tags": ["data", "a11y"] }
+      ]
+    },
+    {
+      "id": "design-system/typography", "category": "design-system", "title": "Typography", "icon": "🔤",
+      "description": "The type scale everything else hangs off.",
+      "items": [
+        { "id": "scale", "title": "Defined type scale", "description": "A limited set of sizes with named roles (display, h1–h4, body, caption).", "priority": "must", "tags": ["visual"] },
+        { "id": "rem", "title": "Scales with user settings", "description": "Sizes in rem; layout survives 200% text zoom.", "priority": "must", "tags": ["a11y"], "wcag": "1.4.4" },
+        { "id": "body", "title": "Readable body size", "description": "16px minimum for body text on the web.", "priority": "must", "tags": ["a11y"] },
+        { "id": "line-height", "title": "Line height per role", "description": "Tighter for headings, ~1.5 for body.", "priority": "should", "tags": ["visual"] },
+        { "id": "loading", "title": "Font loading strategy", "description": "font-display, subsetting and fallback metrics to avoid layout shift.", "priority": "should", "tags": ["perf"] },
+        { "id": "numerals", "title": "Tabular numbers where needed", "description": "Tables, prices and timers use tabular figures.", "priority": "nice", "tags": ["data"] }
+      ]
+    },
+    {
+      "id": "design-system/tokens", "category": "design-system", "title": "Design Tokens", "icon": "🧱",
+      "description": "The single source of truth shared by design and code.",
+      "items": [
+        { "id": "tiers", "title": "Tiered tokens", "description": "Primitive → semantic → component tiers; components only consume semantic or component tokens.", "priority": "must", "tags": ["code"] },
+        { "id": "naming", "title": "Predictable naming", "description": "A documented naming grammar (category-property-variant-state).", "priority": "must", "tags": ["code"] },
+        { "id": "sync", "title": "Synced to code", "description": "Tokens generated from one source into CSS, iOS and Android outputs.", "priority": "should", "tags": ["code"] },
+        { "id": "themes", "title": "Theme-ready", "description": "Light, dark and high-contrast modes swap at the semantic layer.", "priority": "should", "tags": ["visual", "a11y"] },
+        { "id": "spacing", "title": "Spacing and radius scales", "description": "4 or 8-based spacing and a small radius set.", "priority": "should", "tags": ["visual"] },
+        { "id": "motion", "title": "Motion tokens", "description": "Durations and easings named and reduced under prefers-reduced-motion.", "priority": "nice", "tags": ["a11y"], "wcag": "2.3.3" }
+      ]
+    },
+    {
+      "id": "design-system/accessibility", "category": "design-system", "title": "Accessibility Foundations", "icon": "♿",
+      "description": "Baseline accessibility that every component inherits.",
+      "items": [
+        { "id": "keyboard", "title": "Fully keyboard operable", "description": "Every interaction works with Tab, Shift+Tab, Enter, Space, Esc and arrows where expected.", "priority": "must", "tags": ["a11y"], "wcag": "2.1.1" },
+        { "id": "focus-order", "title": "Logical focus order", "description": "Matches visual order; no positive tabindex.", "priority": "must", "tags": ["a11y"], "wcag": "2.4.3" },
+        { "id": "names", "title": "Accessible names", "description": "Every control has a name matching its visible label.", "priority": "must", "tags": ["a11y"], "wcag": "2.5.3" },
+        { "id": "reduced-motion", "title": "Reduced motion", "description": "Non-essential animation disabled under prefers-reduced-motion.", "priority": "should", "tags": ["a11y"], "wcag": "2.3.3" },
+        { "id": "reflow", "title": "Reflow at 320px", "description": "No two-dimensional scrolling at 400% zoom.", "priority": "must", "tags": ["a11y"], "wcag": "1.4.10" },
+        { "id": "skip", "title": "Skip link and landmarks", "description": "Skip-to-content link; header, nav, main and footer landmarks.", "priority": "should", "tags": ["a11y"], "wcag": "2.4.1" },
+        { "id": "testing", "title": "Tested with assistive tech", "description": "Checked with a screen reader and automated tooling (axe, Lighthouse).", "priority": "should", "tags": ["a11y"] }
+      ]
+    },
+    {
+      "id": "flows/sign-up", "category": "flows", "title": "Signing up", "icon": "✍️",
+      "description": "From interest to account with as little friction as possible.",
+      "items": [
+        { "id": "fields", "title": "Minimum fields", "description": "Email and password (or passwordless); everything else after sign-up.", "priority": "must", "tags": ["ux"] },
+        { "id": "password-rules", "title": "Rules shown upfront", "description": "Password requirements visible while typing, not after failure.", "priority": "must", "tags": ["ux", "copy"] },
+        { "id": "sso", "title": "Social / SSO options", "description": "Offered where your audience expects them.", "priority": "should", "tags": ["ux"] },
+        { "id": "verify", "title": "Verification doesn't block", "description": "Users can start exploring while email verification is pending where risk allows.", "priority": "should", "tags": ["ux"] },
+        { "id": "existing", "title": "Existing account handled", "description": "Guides to login or reset without leaking account existence to strangers.", "priority": "must", "tags": ["security"] },
+        { "id": "consent", "title": "Clear consent", "description": "Terms/privacy linked; marketing opt-in unticked by default.", "priority": "must", "tags": ["legal", "privacy"] },
+        { "id": "bot", "title": "Bot protection", "description": "Rate limiting and invisible checks before visible CAPTCHAs.", "priority": "should", "tags": ["security"] }
+      ]
+    },
+    {
+      "id": "flows/reset-password", "category": "flows", "title": "Resetting password", "icon": "🔑",
+      "description": "Getting locked-out users back in, securely.",
+      "items": [
+        { "id": "same-message", "title": "Same message for any email", "description": "'If an account exists, we sent a link' — prevents enumeration.", "priority": "must", "tags": ["security"] },
+        { "id": "expiry", "title": "Expiring single-use links", "description": "Token expires (e.g. 30–60 min) and works once.", "priority": "must", "tags": ["security"] },
+        { "id": "resend", "title": "Resend with cooldown", "description": "Resend option with a visible timer and spam-folder hint.", "priority": "should", "tags": ["ux"] },
+        { "id": "new-password", "title": "Strong new password UX", "description": "Requirements visible, show-password toggle, no confirm field needed if toggle exists.", "priority": "should", "tags": ["ux"] },
+        { "id": "sessions", "title": "Other sessions signed out", "description": "Option (or default) to sign out other devices after reset.", "priority": "should", "tags": ["security"] },
+        { "id": "notify", "title": "Change notification", "description": "Email confirming the change with a 'this wasn't me' link.", "priority": "must", "tags": ["security"] },
+        { "id": "signed-in", "title": "Lands signed in", "description": "User is signed in after reset rather than sent back to login.", "priority": "nice", "tags": ["ux"] }
+      ]
+    },
+    {
+      "id": "flows/checkout", "category": "flows", "title": "Checking out", "icon": "🛒",
+      "description": "The last mile before revenue — remove every reason to leave.",
+      "items": [
+        { "id": "guest", "title": "Guest checkout", "description": "Account creation optional, offered after purchase.", "priority": "must", "tags": ["ux"] },
+        { "id": "total", "title": "Total cost early", "description": "Shipping, tax and fees shown before the payment step.", "priority": "must", "tags": ["copy", "legal"] },
+        { "id": "progress", "title": "Step indicator", "description": "Shows where the user is and how many steps remain.", "priority": "should", "tags": ["ux"] },
+        { "id": "autofill", "title": "Address and card autofill", "description": "Correct autocomplete attributes; wallet payments (Apple/Google Pay).", "priority": "must", "tags": ["ux"], "wcag": "1.3.5" },
+        { "id": "errors", "title": "Inline validation", "description": "Errors next to the field, preserved input, card errors explained plainly.", "priority": "must", "tags": ["ux", "a11y"], "wcag": "3.3.1" },
+        { "id": "trust", "title": "Trust cues", "description": "Security, returns and support info near the pay button.", "priority": "should", "tags": ["copy"] },
+        { "id": "confirm", "title": "Confirmation page and email", "description": "Order number, summary, delivery estimate and next steps.", "priority": "must", "tags": ["ux"] },
+        { "id": "double-submit", "title": "No double charges", "description": "Pay button disabled while processing; idempotent payment requests.", "priority": "must", "tags": ["code", "security"] }
+      ]
+    },
+    {
+      "id": "flows/cancel-subscription", "category": "flows", "title": "Canceling subscription", "icon": "🚪",
+      "description": "An honest exit that keeps the door open.",
+      "items": [
+        { "id": "findable", "title": "Easy to find", "description": "Reachable from billing settings in a couple of clicks.", "priority": "must", "tags": ["ux", "legal"] },
+        { "id": "consequences", "title": "Explain what happens", "description": "When access ends, what data is kept, and for how long.", "priority": "must", "tags": ["copy"] },
+        { "id": "alternatives", "title": "Offer alternatives once", "description": "Pause, downgrade or discount — one screen, easy to decline.", "priority": "should", "tags": ["ux"] },
+        { "id": "reason", "title": "Optional reason", "description": "Short, skippable survey.", "priority": "nice", "tags": ["research"] },
+        { "id": "confirm", "title": "Confirmation", "description": "On-screen and by email with the effective date.", "priority": "must", "tags": ["ux"] },
+        { "id": "reactivate", "title": "Easy to come back", "description": "One-click reactivation before the period ends.", "priority": "should", "tags": ["growth"] }
+      ]
+    },
+    {
+      "id": "flows/delete-account", "category": "flows", "title": "Deleting account", "icon": "🗑️",
+      "description": "Irreversible, legally regulated, and a test of trust.",
+      "items": [
+        { "id": "self-serve", "title": "Self-serve deletion", "description": "Available in-app (required by app stores and privacy laws in many regions).", "priority": "must", "tags": ["legal", "privacy"] },
+        { "id": "export", "title": "Export first", "description": "Offer a data export before deleting.", "priority": "should", "tags": ["privacy"] },
+        { "id": "impact", "title": "Spell out the impact", "description": "Subscriptions, shared content and team ownership consequences listed.", "priority": "must", "tags": ["copy"] },
+        { "id": "confirm", "title": "Deliberate confirmation", "description": "Re-authentication or typing a phrase; destructive styling.", "priority": "must", "tags": ["security", "ux"] },
+        { "id": "grace", "title": "Grace period", "description": "A recovery window, clearly stated, before permanent deletion.", "priority": "should", "tags": ["ux"] },
+        { "id": "receipt", "title": "Deletion receipt", "description": "Email confirming the request and the final deletion date.", "priority": "should", "tags": ["legal"] }
+      ]
+    },
+    {
+      "id": "flows/form-submission", "category": "flows", "title": "Submitting a form", "icon": "📨",
+      "description": "From first field to confirmed submission without lost work.",
+      "items": [
+        { "id": "single-column", "title": "Single column layout", "description": "One field per row, top-aligned labels.", "priority": "should", "tags": ["ux"] },
+        { "id": "validation-timing", "title": "Validate at the right time", "description": "On blur or submit, not on every keystroke.", "priority": "should", "tags": ["ux"] },
+        { "id": "error-summary", "title": "Error summary on submit", "description": "Summary at top linking to each invalid field; focus moves to it.", "priority": "must", "tags": ["a11y"], "wcag": "3.3.1" },
+        { "id": "preserve", "title": "Never lose input", "description": "Values persist after errors, network failures and accidental navigation.", "priority": "must", "tags": ["ux"] },
+        { "id": "pending", "title": "Pending state", "description": "Submit shows progress and blocks duplicate submissions.", "priority": "must", "tags": ["ux"] },
+        { "id": "success", "title": "Clear success", "description": "Confirmation says what happens next and when.", "priority": "must", "tags": ["copy"] },
+        { "id": "offline", "title": "Network failure handled", "description": "Explains the failure and offers retry without retyping.", "priority": "should", "tags": ["ux"] }
+      ]
+    },
+    {
+      "id": "flows/file-upload", "category": "flows", "title": "Uploading media", "icon": "📤",
+      "description": "Getting files in, with honest progress and recoverable failures.",
+      "items": [
+        { "id": "methods", "title": "Multiple input methods", "description": "Drag and drop plus a keyboard-accessible file picker; paste where useful.", "priority": "must", "tags": ["ux", "a11y"] },
+        { "id": "limits", "title": "Limits stated upfront", "description": "Allowed types, max size and count shown before upload.", "priority": "must", "tags": ["copy"] },
+        { "id": "progress", "title": "Per-file progress", "description": "Progress, cancel and remove for each file.", "priority": "should", "tags": ["ux"] },
+        { "id": "errors", "title": "Specific failure reasons", "description": "Too large, wrong type, network — each with a retry.", "priority": "must", "tags": ["ux", "copy"] },
+        { "id": "preview", "title": "Preview before commit", "description": "Thumbnails or names to confirm the right files.", "priority": "should", "tags": ["ux"] },
+        { "id": "resumable", "title": "Resumable large uploads", "description": "Chunked uploads survive flaky connections.", "priority": "nice", "tags": ["perf"] },
+        { "id": "privacy", "title": "Metadata handling", "description": "Strip or disclose EXIF/location data on images.", "priority": "should", "tags": ["privacy"] }
+      ]
+    }
+  ],
+  "kits": [
+    { "id": "landing-page", "title": "Launch a landing page", "icon": "🚀", "description": "Everything to ship a marketing site that converts.", "checklists": ["website/landing-page", "website/pricing", "website/faq", "website/contact", "website/footer", "website/404", "design-system/typography", "design-system/color-system"] },
+    { "id": "saas", "title": "SaaS web app", "icon": "💼", "description": "Core screens and flows for a subscription product.", "checklists": ["flows/sign-up", "web-app/onboarding", "web-app/dashboard", "web-app/empty-state", "web-app/data-table", "web-app/settings", "web-app/notifications", "web-app/billing", "flows/reset-password", "flows/cancel-subscription", "flows/delete-account"] },
+    { "id": "mobile-mvp", "title": "Mobile app MVP", "icon": "📱", "description": "First release of an iOS / Android app.", "checklists": ["mobile/onboarding", "mobile/login", "mobile/tab-bar", "mobile/search", "mobile/push-permission", "mobile/paywall", "flows/delete-account"] },
+    { "id": "design-system", "title": "Design system v1", "icon": "🧱", "description": "Foundations and core components for a new system.", "checklists": ["design-system/tokens", "design-system/color-system", "design-system/typography", "design-system/accessibility", "design-system/button", "design-system/input-field", "design-system/modal", "design-system/toast", "design-system/tooltip"] },
+    { "id": "ecommerce", "title": "E-commerce store", "icon": "🛍️", "description": "From product discovery to a confirmed order.", "checklists": ["website/landing-page", "mobile/search", "flows/checkout", "flows/sign-up", "flows/form-submission", "website/contact", "website/faq"] }
+  ]
+}

@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>OpenChecklist — design checklists for people and AI</title>
+  <meta name="description" content="Open-source design checklists for websites, web apps, mobile, components and flows. Track projects, export results, and plug the library into AI tools over MCP." />
+  <meta property="og:title" content="OpenChecklist" />
+  <meta property="og:description" content="Open-source design checklists for people and AI agents." />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%235b4bff'/%3E%3Cpath d='M9 16.5l4.5 4.5L23 11' fill='none' stroke='%23d9ff5b' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <script>
+    try { const t = JSON.parse(localStorage.getItem('openchecklist:v1') || '{}').theme; if (t) document.documentElement.dataset.theme = t; } catch {}
+  </script>
+</head>
+<body>
+  <a class="skip" href="#app">Skip to content</a>
+  <header class="topbar">
+    <div class="wrap topbar-inner">
+      <a class="brand" href="#/" aria-label="OpenChecklist home">
+        <svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" class="brand-bg"/><path d="M9 16.5l4.5 4.5L23 11" class="brand-tick"/></svg>
+        <span>OpenChecklist</span>
+      </a>
+      <nav class="nav" aria-label="Primary">
+        <a href="#/browse">Browse</a>
+        <a href="#/kits">Kits</a>
+        <a href="#/projects">Projects</a>
+        <a href="#/mcp">MCP</a>
+      </nav>
+      <div class="topbar-actions">
+        <button class="search-btn" data-action="palette" aria-label="Search checklists">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+          <span class="search-label">Search</span><kbd>⌘K</kbd>
+        </button>
+        <button class="icon-btn" data-action="theme" aria-label="Toggle dark mode">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="app" tabindex="-1"></main>
+
+  <footer class="footer">
+    <div class="wrap footer-inner">
+      <p><strong>OpenChecklist</strong> is MIT-licensed. Content lives in <code>data/checklists.json</code> — add a checklist with a pull request.</p>
+      <p class="muted">Inspired by checklist.design. All checklist content here is original.</p>
+    </div>
+  </footer>
+
+  <nav class="mobile-nav" aria-label="Primary (mobile)">
+    <a href="#/">Home</a><a href="#/browse">Browse</a><a href="#/kits">Kits</a><a href="#/projects">Projects</a><a href="#/mcp">MCP</a>
+  </nav>
+
+  <dialog id="palette" class="palette" aria-label="Search">
+    <div class="palette-input">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+      <input id="palette-q" type="search" placeholder="Search checklists and items…" autocomplete="off" aria-controls="palette-results" />
+      <kbd>esc</kbd>
+    </div>
+    <ul id="palette-results" class="palette-results" role="listbox"></ul>
+  </dialog>
+
+  <dialog id="project-dialog" class="sheet" aria-labelledby="project-dialog-title">
+    <form method="dialog" id="project-form">
+      <h2 id="project-dialog-title">New project</h2>
+      <label class="field"><span>Project name</span><input name="name" required placeholder="e.g. Acme marketing site" /></label>
+      <label class="field"><span>Start from a kit</span><select name="kit"></select></label>
+      <fieldset class="pick"><legend>Checklists</legend><div id="pick-list"></div></fieldset>
+      <div class="sheet-actions">
+        <button value="cancel" class="btn ghost" formnovalidate>Cancel</button>
+        <button value="create" class="btn primary">Create project</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

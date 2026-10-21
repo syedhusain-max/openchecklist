@@ -1,0 +1,15 @@
+{
+  "name": "openchecklist",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Open-source design checklists for websites, web apps, mobile, components and flows — with an MCP server for AI tools.",
+  "type": "module",
+  "scripts": {
+    "start": "node scripts/serve.mjs",
+    "sync": "node -e \"require('fs').copyFileSync('data/checklists.json','web/checklists.json')\"",
+    "validate": "node scripts/validate.mjs",
+    "test": "npm run validate && npm --prefix mcp test",
+    "mcp": "node mcp/index.js"
+  },
+  "license": "MIT"
+}
