@@ -53,10 +53,22 @@ function updateRing(el, pct) {
   el.querySelector('span').textContent = `${p}%`;
 }
 
-function toast(msg) {
+// Toasts with an action (Undo) stay longer and pause while hovered so there's time to use them.
+function toast(msg, action) {
   const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  clearTimeout(toast.timer); toast.timer = setTimeout(() => t.classList.remove('show'), 2200);
+  const hide = () => t.classList.remove('show');
+  t.replaceChildren(document.createTextNode(msg));
+  if (action) {
+    const b = document.createElement('button');
+    b.className = 'toast-action'; b.textContent = action.label;
+    b.onclick = () => { hide(); action.run(); };
+    t.append(b);
+  }
+  t.classList.toggle('has-action', !!action);
+  t.classList.add('show');
+  clearTimeout(toast.timer); toast.timer = setTimeout(hide, action ? 7000 : 2200);
+  t.onmouseenter = () => clearTimeout(toast.timer);
+  t.onmouseleave = () => { toast.timer = setTimeout(hide, 2500); };
 }
 
 function confetti(fromEl) {
@@ -236,6 +248,7 @@ function itemHTML(c, it, ctx) {
         <button class="link-btn" data-action="link">Copy link</button>
       </div>
       <textarea class="note" data-note="${key}" placeholder="Notes, evidence, ticket links…" aria-label="Note for ${esc(it.title)}" ${note ? '' : 'hidden'}>${esc(note)}</textarea>
+      <span class="note-status" aria-live="polite"></span>
     </div></li>`;
 }
 
@@ -273,7 +286,8 @@ function viewChecklist(id, focusItem) {
     <div class="cl-layout">
       <div class="cl-main">
         ${toolbar(c.id)}
-        <ol class="items" data-filter="all">${c.items.map((it) => itemHTML(c, it, ctx)).join('')}</ol>
+        <ol class="items" data-filter="all">${c.items.map((it) => itemHTML(c, it, ctx)).join('')}</ol><p class="filter-empty" hidden></p>
+        <div data-done-slot></div>
         <p class="muted" style="font-size:14px">Keyboard: <kbd>j</kbd>/<kbd>k</kbd> move · <kbd>x</kbd> check · <kbd>n</kbd> not applicable · <kbd>p</kbd> preview · <kbd>/</kbd> search</p>
       </div>
       <aside class="cl-preview">${previewPanel(c)}</aside>
@@ -324,7 +338,7 @@ function viewProject(pid) {
       <div><button class="btn sm danger" data-action="delete-project">Delete project</button></div></div>
     ${toolbar('project')}
     ${lists.map((c) => `<section class="project-section" id="sec-${c.id.replace('/', '-')}"><header><span style="font-size:26px" aria-hidden="true">${c.icon}</span><h2><a href="#/c/${c.id}">${esc(c.title)}</a> <small class="muted" style="font-size:16px">${esc(catName(c.category))}</small></h2><div style="margin-left:auto;display:flex;gap:10px;align-items:center"><button class="btn sm" data-action="pv-open" data-cid="${c.id}">👁 Preview</button>${ring(stats(p, [c]).pct, c.id)}</div></header>
-      <ol class="items" data-filter="all">${c.items.map((it) => itemHTML(c, it, p)).join('')}</ol></section>`).join('')}
+      <ol class="items" data-filter="all">${c.items.map((it) => itemHTML(c, it, p)).join('')}</ol><p class="filter-empty" hidden></p></section>`).join('')}
   </div>`;
 }
 
@@ -556,6 +570,7 @@ function refreshProgress() {
     const el = app.querySelector(`.project-section .ring[data-ring="${CSS.escape(c.id)}"]`);
     if (el) updateRing(el, stats(ctx, [c]).pct);
   }
+  renderDoneSlot(s);
   return s;
 }
 
@@ -567,8 +582,57 @@ function setItem(li, value) {
   li.dataset.state = value;
   li.querySelector('.check').setAttribute('aria-checked', value === 'done' ? 'true' : value === 'na' ? 'mixed' : 'false');
   li.querySelector('[data-action="na"]').setAttribute('aria-pressed', String(value === 'na'));
+  // With "Hide completed" on, let the tick animation play before the item leaves the list.
+  const list = li.closest('.items');
+  if (list?.dataset.hideDone === 'true' && value !== 'todo') {
+    clearTimeout(li._leave);
+    li.classList.add('just-changed');
+    li._leave = setTimeout(() => { li.classList.add('fading'); li._leave = setTimeout(() => { li.classList.remove('just-changed', 'fading'); updateFilterEmpty(); }, 300); }, 700);
+  }
   const s = refreshProgress();
   if (before < 1 && s.pct === 1 && s.applicable > 0) { confetti(app.querySelector('[data-ring-slot]') || li); toast('Everything checked — ship it! 🎉'); }
+}
+
+function updateFilterEmpty() {
+  app.querySelectorAll('.items').forEach((l) => {
+    const msg = l.nextElementSibling;
+    if (!msg?.classList.contains('filter-empty')) return;
+    const visible = [...l.children].some((li) => li.offsetParent !== null);
+    msg.hidden = visible;
+    if (visible) return;
+    const f = l.dataset.filter;
+    const hasPriority = f === 'all' || [...l.children].some((li) => li.dataset.priority === f);
+    msg.innerHTML = l.dataset.hideDone === 'true' && hasPriority
+      ? `Everything here is done ✓ <button class="link-btn" data-action="show-done">Show completed</button>`
+      : `No ${PRIORITY_LABEL[f].toLowerCase()}-priority items here. <button class="link-btn" data-action="show-all">Show all</button>`;
+  });
+}
+
+// Peak-end: when everything applicable is done, offer the natural next steps instead of a dead end.
+function nextSuggestion() {
+  if (current.lists.length !== 1) return null;
+  const c = current.lists[0];
+  const open = (id) => id !== c.id && byId.has(id) && stats(current.ctx, [byId.get(id)]).pct < 1;
+  for (const k of DATA.kits.filter((x) => x.checklists.includes(c.id))) {
+    const after = k.checklists.slice(k.checklists.indexOf(c.id) + 1).concat(k.checklists).find(open);
+    if (after) return byId.get(after);
+  }
+  return DATA.checklists.find((x) => x.category === c.category && open(x.id)) || null;
+}
+function renderDoneSlot(s) {
+  const slot = app.querySelector('[data-done-slot]');
+  if (!slot) return;
+  const complete = s.applicable > 0 && s.pct === 1;
+  if (String(complete) === slot.dataset.on) return;
+  slot.dataset.on = String(complete);
+  if (!complete) { slot.innerHTML = ''; return; }
+  const next = nextSuggestion();
+  slot.innerHTML = `<div class="done-card" role="status">
+    <span class="done-emoji" aria-hidden="true">🎉</span>
+    <div class="grow"><h3>${current.lists.length > 1 ? 'Project' : 'Checklist'} complete</h3>
+      <p class="muted">${s.done} of ${s.applicable} applicable checks done${s.na ? `, ${s.na} marked not applicable` : ''}. Hand it off or keep going.</p></div>
+    <div class="done-actions"><button class="btn sm" data-action="export-md">Export report</button><button class="btn sm" data-action="share">Copy share link</button>
+      ${next ? `<a class="btn sm primary" href="#/c/${next.id}">Next: ${esc(next.title)} →</a>` : ''}</div></div>`;
 }
 
 function exportCurrent(kind) {
@@ -586,20 +650,30 @@ function openProjectDialog(kitId) {
   const kitSel = form.elements.kit;
   kitSel.innerHTML = `<option value="">— None, I'll pick —</option>${DATA.kits.map((k) => `<option value="${k.id}">${esc(k.title)}</option>`).join('')}`;
   document.getElementById('pick-list').innerHTML = DATA.categories.map((cat) => `<h4>${esc(cat.name)}</h4>${DATA.checklists.filter((c) => c.category === cat.id).map((c) => `<label><input type="checkbox" name="cl" value="${c.id}" />${c.icon} ${esc(c.title)}</label>`).join('')}`).join('');
+  // Prevent the empty-project error instead of reporting it after the dialog closes.
+  const createBtn = form.querySelector('button[value=create]');
+  const syncCreate = () => {
+    const n = form.querySelectorAll('input[name=cl]:checked').length;
+    createBtn.disabled = n === 0;
+    createBtn.textContent = n ? `Create project · ${n} checklist${n === 1 ? '' : 's'}` : 'Pick at least one checklist';
+  };
   const applyKit = () => {
     const k = DATA.kits.find((x) => x.id === kitSel.value);
     form.querySelectorAll('input[name=cl]').forEach((cb) => { cb.checked = !!k && k.checklists.includes(cb.value); });
     if (k && !form.elements.name.value) form.elements.name.value = k.title;
+    syncCreate();
   };
   kitSel.onchange = applyKit;
+  form.onchange = syncCreate;
   form.reset();
   kitSel.value = kitId || '';
   applyKit();
+  dlg.returnValue = '';
   dlg.showModal();
   dlg.onclose = () => {
     if (dlg.returnValue !== 'create') return;
     const ids = [...form.querySelectorAll('input[name=cl]:checked')].map((x) => x.value);
-    if (!ids.length) { toast('Pick at least one checklist'); return; }
+    if (!ids.length) return;
     const pid = uid();
     state.projects[pid] = { name: form.elements.name.value.trim() || 'Untitled project', checklists: ids, progress: {}, notes: {}, created: Date.now() };
     save();
@@ -619,24 +693,33 @@ app.addEventListener('click', (e) => {
   else if (a === 'filter') {
     btn.parentElement.querySelectorAll('[data-action=filter]').forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
     app.querySelectorAll('.items').forEach((l) => { l.dataset.filter = btn.dataset.filter; });
+    updateFilterEmpty();
   } else if (a === 'hide-done') {
     const on = btn.getAttribute('aria-pressed') !== 'true';
     btn.setAttribute('aria-pressed', String(on));
     app.querySelectorAll('.items').forEach((l) => { l.dataset.hideDone = String(on); });
+    updateFilterEmpty();
   } else if (a === 'export-md') exportCurrent('md');
   else if (a === 'export-csv') exportCurrent('csv');
   else if (a === 'export-json') exportCurrent('json');
   else if (a === 'ai-prompt') copy(toAIPrompt(current.title, current.lists), 'AI review prompt copied — paste it with your screenshot');
   else if (a === 'share') copy(shareLink(current.title, current.lists, current.ctx), 'Share link copied');
   else if (a === 'reset') {
-    if (!confirm('Reset progress and notes for this view?')) return;
-    for (const c of current.lists) { delete current.ctx.progress[c.id]; for (const k of Object.keys(current.ctx.notes)) if (k.startsWith(`${c.id}::`)) delete current.ctx.notes[k]; }
+    // Act immediately and offer Undo instead of a blocking confirm.
+    const ctx = current.ctx;
+    const snapshot = JSON.stringify({ progress: ctx.progress, notes: ctx.notes });
+    for (const c of current.lists) { delete ctx.progress[c.id]; for (const k of Object.keys(ctx.notes)) if (k.startsWith(`${c.id}::`)) delete ctx.notes[k]; }
     save(); route();
+    toast('Progress and notes reset', { label: 'Undo', run() { Object.assign(ctx, JSON.parse(snapshot)); save(); route(); } });
   } else if (a === 'new-project') openProjectDialog(btn.dataset.kit);
   else if (a === 'delete-project') {
-    if (!confirm(`Delete “${state.projects[current.pid].name}”? This can't be undone.`)) return;
-    delete state.projects[current.pid]; save(); location.hash = '#/projects';
-  } else if (a === 'confirm-import' && pendingImport) {
+    const { pid } = current;
+    const project = state.projects[pid];
+    delete state.projects[pid]; save(); location.hash = '#/projects';
+    toast(`Deleted “${project.name}”`, { label: 'Undo', run() { state.projects[pid] = project; save(); location.hash = `#/p/${pid}`; } });
+  } else if (a === 'show-done') app.querySelector('[data-action=hide-done][aria-pressed=true]')?.click();
+  else if (a === 'show-all') app.querySelector('[data-action=filter][data-filter=all]')?.click();
+  else if (a === 'confirm-import' && pendingImport) {
     const pid = uid();
     state.projects[pid] = { name: pendingImport.name || 'Imported project', checklists: pendingImport.checklists.filter((x) => byId.has(x)), progress: pendingImport.progress || {}, notes: pendingImport.notes || {}, created: Date.now() };
     save(); pendingImport = null; location.hash = `#/p/${pid}`;
@@ -646,11 +729,15 @@ app.addEventListener('click', (e) => {
   else handlePreviewControl(btn);
 });
 // Hovering or focusing an item previews it (pointer devices only, so touch scrolling doesn't jump the panel).
+// A short dwell (hover intent) stops the preview flickering as the pointer crosses items on its way elsewhere.
+let hoverTimer;
 app.addEventListener('pointerover', (e) => {
   if (e.pointerType !== 'mouse') return;
   const li = e.target.closest('.item');
-  if (li && previewCtl.has(li.dataset.cid)) previewItem(li, false);
+  clearTimeout(hoverTimer);
+  if (li && li !== previewing && previewCtl.has(li.dataset.cid)) hoverTimer = setTimeout(() => previewItem(li, false), 140);
 });
+app.addEventListener('pointerout', (e) => { if (!e.relatedTarget?.closest?.('.item')) clearTimeout(hoverTimer); });
 app.addEventListener('focusin', (e) => {
   const li = e.target.closest('.item');
   if (li && previewCtl.has(li.dataset.cid)) previewItem(li, false);
@@ -677,7 +764,12 @@ app.addEventListener('input', (e) => {
   if (!ta || !current) return;
   const v = ta.value;
   if (v.trim()) current.ctx.notes[ta.dataset.note] = v; else delete current.ctx.notes[ta.dataset.note];
-  clearTimeout(ta._t); ta._t = setTimeout(save, 300);
+  const status = ta.nextElementSibling;
+  clearTimeout(ta._t); clearTimeout(ta._s);
+  ta._t = setTimeout(() => {
+    save();
+    if (status?.classList.contains('note-status')) { status.textContent = 'Saved ✓'; ta._s = setTimeout(() => { status.textContent = ''; }, 1500); }
+  }, 400);
 });
 
 // ---------- command palette ----------

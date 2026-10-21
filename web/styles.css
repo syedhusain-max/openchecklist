@@ -299,3 +299,19 @@ kbd { border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 
 .thumb-card { padding: 10px 10px 14px; }
 .thumb-card .card-top, .thumb-card p { padding: 0 6px; }
 .thumb { --oc-max-h: 210px; --oc-overflow: hidden; height: 210px; border-radius: 12px; overflow: hidden; background: var(--oc-stage); }
+
+/* Interaction refinements */
+.toast.has-action { pointer-events: auto; display: flex; align-items: center; gap: 14px; padding-right: 8px; }
+.toast-action { background: color-mix(in srgb, var(--bg) 16%, transparent); border: 0; color: var(--bg); font-weight: 700; text-decoration: underline; text-underline-offset: 3px; padding: 6px 12px; min-height: 36px; border-radius: 8px; }
+.toast-action:hover { background: color-mix(in srgb, var(--bg) 28%, transparent); }
+.btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+.note-status { display: block; min-height: 18px; font-size: 12px; color: var(--done); margin-top: 4px; }
+.filter-empty { margin: -12px 0 24px; padding: 20px; text-align: center; color: var(--text-muted); background: var(--surface); border: 1px dashed var(--border); border-radius: var(--radius); }
+.filter-empty .link-btn { margin-left: 4px; color: var(--accent); font-weight: 600; }
+.items[data-hide-done="true"] .item.just-changed { display: grid; }
+.item.fading { opacity: 0; transition: opacity .3s ease; }
+.done-card { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; margin-bottom: 24px; padding: 18px 20px; border-radius: var(--radius); background: linear-gradient(120deg, color-mix(in srgb, var(--done) 14%, var(--surface)), var(--surface)); border: 1px solid color-mix(in srgb, var(--done) 40%, var(--border)); animation: rise .4s cubic-bezier(.2,.8,.2,1); }
+.done-card h3 { font-size: 20px; }
+.done-card .grow { flex: 1; min-width: 200px; }
+.done-emoji { font-size: 34px; }
+.done-actions { display: flex; gap: 8px; flex-wrap: wrap; }
