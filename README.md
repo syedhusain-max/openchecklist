@@ -2,6 +2,8 @@
 
 Open-source design checklists for **websites, web apps, mobile, design-system components and flows** — for people in the browser and for AI agents over **MCP**.
 
+**Live site:** https://syedhusain-max.github.io/openchecklist/
+
 Inspired by [checklist.design](https://www.checklist.design/). All checklist content in this repo is original and MIT-licensed.
 
 ## What's better
@@ -34,7 +36,8 @@ The web app is plain HTML/CSS/JS in [`web/`](web/) — no build step. Deploy `we
 ## MCP server
 
 ```bash
-cd mcp && npm install
+git clone https://github.com/syedhusain-max/openchecklist.git
+cd openchecklist/mcp && npm install
 ```
 
 **Claude Code**

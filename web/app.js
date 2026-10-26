@@ -495,7 +495,7 @@ function viewMCP() {
     <div class="split">
       <div class="prose">
         <h2>1 · Install</h2>
-        <pre class="code"><button class="copy" data-action="copy-code">Copy</button>git clone &lt;your-fork-url&gt; openchecklist
+        <pre class="code"><button class="copy" data-action="copy-code">Copy</button>git clone https://github.com/syedhusain-max/openchecklist.git
 cd openchecklist/mcp && npm install</pre>
         <h2>2 · Claude Code</h2>
         <pre class="code"><button class="copy" data-action="copy-code">Copy</button>claude mcp add openchecklist -- node /absolute/path/to/openchecklist/mcp/index.js</pre>
