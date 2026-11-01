@@ -15,6 +15,6 @@
   "keywords": ["mcp", "model-context-protocol", "design", "checklist", "ux", "accessibility"],
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.32.1",
-    "zod": "^3.25.76"
+    "zod": "^4.6.7"
   }
 }
